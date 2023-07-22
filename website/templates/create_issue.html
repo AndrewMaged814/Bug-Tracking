@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Create Issue{% endblock %}
+
+{% block content %}
+  <h1>Create Issue</h1>
+
+  <form method="POST">
+    <div class="form-group">
+      <label for="issueName">Issue Name</label>
+      <input type="text" class="form-control" id="issueName" name="issueName" placeholder="Enter issue name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter issue description" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="status">Status</label>
+      <select class="form-control" id="status" name="status" required>
+        <option value="Open">Open</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Closed">Closed</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="assignee">Assignee</label>
+      <select class="form-control" id="assignee" name="assignee" required>
+        {% for user in users %}
+        <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="project">Project</label>
+      <select class="form-control" id="project" name="project" required>
+        {% for project in projects %}
+        <option value="{{ project.id }}">{{ project.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Issue</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center">Dashboard</h1>
+  <div class="row mt-4">
+    <!-- Loop through the issues and generate Bootstrap cards -->
+    {% for issue in issues %}
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">{{ issue.title }}</h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{ issue.description }}</p>
+          <p class="card-text">Status: {{ issue.status }}</p>
+          <p class="card-text">Assignee: {{ issue.user.first_name }}</p>  
+          <p class="card-text">Project: {{ issue.project.name }}</p>
+          <!-- Add other issue information here, if needed -->
+          <p class="card-text"><small class="text-muted">Last updated at {{ issue.date_reported }}</small></p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
