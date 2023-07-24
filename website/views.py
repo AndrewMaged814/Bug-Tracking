@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect
 from flask_login import login_required, current_user
+from werkzeug.exceptions import abort
 from .models import User, Project, Bug
 from . import db
 import json
@@ -10,10 +11,13 @@ views = Blueprint('views', __name__)
 @views.route('/')
 @login_required
 def dashboard():
-    # Get all issues from the database (Assuming Bug is your Issue model)
     issues = Bug.query.all()
 
-    return render_template("dashboard.html", user=current_user, issues=issues)
+    # Get all users from the database
+    users = User.query.all()
+
+    return render_template("dashboard.html", user=current_user, issues=issues, users=users)
+
 
 @views.route('/create_issue', methods=['GET', 'POST'])
 @login_required
@@ -47,7 +51,44 @@ def create_issue():
         # and pass the necessary data (users and projects) to populate the dropdowns
         users = User.query.all()  # Get all users from the database
         projects = Project.query.all()  # Get all projects from the database
-        return render_template("create_issue.html", user=current_user, users=users, projects=projects)
+        issues = Bug.query.all()
+        return render_template("create_issue.html", user=current_user, users=users, projects=projects, issue=issues)
+
+
+
+@views.route('/update_issue/<int:issue_id>', methods=['GET', 'POST'])
+@login_required
+def update_issue(issue_id):
+    # Get the issue to update from the database
+    issue = Bug.query.get_or_404(issue_id)
+
+    if request.method == 'POST':
+        # Get the form data submitted by the user
+        issue.title = request.form['title']
+        issue.description = request.form['description']
+        issue.status = request.form['status']
+
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Redirect back to the dashboard after updating the issue
+        return redirect(url_for('views.dashboard'))
+
+
+@views.route('/delete_issue/<int:issue_id>', methods=['POST'])
+@login_required
+def delete_issue(issue_id):
+    # Retrieve the issue from the database based on the issue_id
+    issue = Bug.query.get_or_404(issue_id)
+
+    # Delete the issue from the database
+    db.session.delete(issue)
+    db.session.commit()
+
+    # Redirect the user back to the dashboard or any other appropriate page after deletion
+    return redirect(url_for('views.dashboard'))
+
 
 @views.route('/create_project', methods=['GET', 'POST'])
 @login_required
