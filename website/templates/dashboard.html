@@ -5,25 +5,83 @@
 {% block content %}
 <div class="container mt-4">
   <h1 class="text-center">Dashboard</h1>
-  <div class="row mt-4">
-    <!-- Loop through the issues and generate Bootstrap cards -->
-    {% for issue in issues %}
-    <div class="col-md-4 mb-4">
-      <div class="card">
+
+  <!-- Row divided into two columns -->
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Assigned Issues Card -->
+      <div class="card border-primary mb-3">
         <div class="card-header">
-          <h5 class="card-title">{{ issue.title }}</h5>
+          <h5 class="card-title">Assigned Issues</h5>
         </div>
         <div class="card-body">
-          <p class="card-text">{{ issue.description }}</p>
-          <p class="card-text">Status: {{ issue.status }}</p>
-          <p class="card-text">Assignee: {{ issue.user.first_name }}</p>  
-          <p class="card-text">Project: {{ issue.project.name }}</p>
-          <!-- Add other issue information here, if needed -->
-          <p class="card-text"><small class="text-muted">Last updated at {{ issue.date_reported }}</small></p>
+          <ul class="list-group list-group-flush">
+            {% for issue in user.bugs %}
+            <li class="list-group-item">
+              <a href="#" data-toggle="modal" data-target="#updateIssueModal{{ issue.id }}">
+                <strong>{{ issue.title }}</strong>
+              </a>
+              <p class="mb-1">{{ issue.description }}</p>
+              <small class="text-muted">Project: {{ issue.project.name }}</small>
+              <p class="mb-0">Assignee: {{ issue.user.first_name }}</p>
+              <p class="mb-0">Status: {{ issue.status }}</p>
+            </li>
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
-    {% endfor %}
+
+    <!-- The right half of the screen can be used for other content if needed -->
+    <div class="col-md-6">
+      <!-- Other content goes here -->
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<!-- Modal for Update Issue -->
+{% for issue in user.bugs %}
+<div class="modal fade" id="updateIssueModal{{ issue.id }}" tabindex="-1" role="dialog" aria-labelledby="updateIssueModalLabel{{ issue.id }}" aria-hidden="true">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateIssueModalLabel">Update Issue - {{ issue.title }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ url_for('views.update_issue', issue_id=issue.id) }}">
+          <!-- Add form fields for updating issue details (e.g., title, description, status) -->
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ issue.title }}">
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description">{{ issue.description }}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select class="form-control" id="status" name="status">
+              <option value="Open" {% if issue.status == 'Open' %}selected{% endif %}>Open</option>
+              <option value="In Progress" {% if issue.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+              <option value="Closed" {% if issue.status == 'Closed' %}selected{% endif %}>Closed</option>
+            </select>
+          </div>
+          
+          <!-- Add a submit button to update the issue -->
+          <button type="submit" class="btn btn-primary">Update Issue</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
+{% endfor %}
+
 {% endblock %}
