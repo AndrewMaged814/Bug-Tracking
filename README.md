@@ -31,7 +31,7 @@ Bug Tracking App is a web application built with Flask that allows users to trac
 
 1. Clone the repository:
  ```bash
-   git clone https://github.com/your-username/Bug-Tracking.git
+   git clone https://github.com/AndrewMaged814/Bug-Tracking.git
    ```
 2. Change directory to the project folder:
  ```bash
