@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+ .card-header .text-muted {
+  color: white !important;
+    }
+    .card-header h5 {
+      color: white !important;
+    }
+    .jumbotron {
+      background-color: transparent !important;
+    }
+    .jumbotron .well {
+      background-color: transparent !important; 
+    }
+  </style>
+
+</head>
+{% extends "base.html" %}
+{% block title %}{{ project.name }} Tickets{% endblock %}
+
+{% block content %}
+<div class="jumbotron p-2">
+  <div class="well text-center">
+    <h2>Project {{project.name}}</h2>
+  </div>
+</div>
+{% if tickets %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <!-- Open Tickets -->
+        <div class="card text-black bg-primary mb-3">
+          <div class="card-header">
+            <h5 class="card-title">Open</h5>
+            <small class="text-muted">{{ open_tickets|length }} tickets available</small>
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for ticket in tickets if ticket.status == "Open" %}
+            <li class="list-group-item">
+              <strong> {{ ticket.title }}</strong>
+              <br>
+              <small class="text-muted">Created by: {{ ticket.user.first_name}},  {{ ticket.date_reported | time_ago }}</small>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <!-- In Progress Tickets -->
+        <div class="card text-black bg-warning mb-3">
+          <div class="card-header">
+            <h5 class="card-title">In Progress</h5>
+            <small class="text-muted">{{ in_progress_tickets|length }} tickets available</small>
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for ticket in tickets if ticket.status == "In Progress" %}
+            <li class="list-group-item">
+              <strong> {{ ticket.title }}</strong>
+              <br>
+              <small class="text-muted">Created by: {{ ticket.user.first_name}},  {{ ticket.date_reported | time_ago }}</small>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <!-- Closed Tickets -->
+        <div class="card text-black bg-success mb-3">
+          <div class="card-header">
+            <h5 class="card-title">Closed</h5>
+            <small class="text-muted">{{ closed_tickets|length }} tickets available</small>
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for ticket in tickets if ticket.status == "Closed" %}
+            <li class="list-group-item">
+              <strong> {{ ticket.title }}</strong>
+              <br>
+              <small class="text-muted">Created by: {{ ticket.user.first_name}},  {{ ticket.date_reported | time_ago }}</small>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <p>No tickets found for this project.</p>
+{% endif %}
+{% endblock %}

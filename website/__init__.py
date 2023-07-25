@@ -1,7 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
+from datetime import datetime, timedelta
+from .utils import time_ago
+
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
@@ -18,6 +21,7 @@ def create_app():
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.jinja_env.filters['time_ago'] = time_ago
 
     from .models import User, Project
     
@@ -28,9 +32,20 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
+    @app.context_processor
+    def inject_projects():
+        if current_user.is_authenticated:
+            projects = Project.query.all()
+        else:
+            projects = []
+        return dict(projects=projects)
+
+
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
+    
+
 
     return app
 

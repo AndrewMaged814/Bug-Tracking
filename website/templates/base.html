@@ -1,107 +1,163 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-      crossorigin="anonymous"
-    />
+<head>
+  <style>
+  
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      padding-top: 15px; 
+      background-color: #001E2C; 
+      color: white !important; 
+    }
+    #sidebar h3 {
+      padding-left: 15px; 
+      padding-top: 10px; 
+      padding-bottom: 10px;
+    }
+    #sidebar a {
+      color: white !important;
+    }
+    #sidebar .dropdown-menu a {
+      color: black !important;
+    }
+  </style>
+  
+  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    crossorigin="anonymous"
+  />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-    <title>{% block title %}Dashboard{% endblock %}</title>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="/">Bug Tracker</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" id="dashboard" href="/">Dashboard</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="createDropdown" role="button" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-              Create New
-            </a>
-            <div class="dropdown-menu" aria-labelledby="createDropdown">
-              <a class="dropdown-item" href="/create_project">New Project</a>
-              <a class="dropdown-item" href="/create_issue">New Issue</a>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="logout" href="/logout">Logout</a>
-          </li>
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link" id="login" href="/login">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="signUp" href="/sign-up">Sign Up</a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </nav>
-    
+  <title>{% block title %}Home{% endblock %}</title>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar "style="background-color:#001E2C;">
+        <div class="position-sticky">
+          <div class="sidebar-header">
+            <h3>Bug Tracker</h3>
+          </div>
+          <ul class="nav flex-column">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="fa fa-bug"></i> 
+                &nbsp;Bugs
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="projectDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-folder"></i>
+                &nbsp;Projects
+              </a>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="projectDropdown">
+                {% if user and user.is_authenticated %}
+                {% for project in projects %}
+                <a class="dropdown-item" href="{{ url_for('views.project_tickets', project_id=project.id) }}">{{ project.name }}</a>
+                {% endfor %}
+                {% else %}
+                <a class="dropdown-item disabled" href="#">No Projects</a>
+                {% endif %}
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/create_project">
+                <i class="fa fa-plus"></i> 
+                &nbsp;New Project
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/create_issue">
+                <i class="fa fa-plus-square"></i>
+                &nbsp;New Issue
+              </a>
+            </li>
+            <div class="mt-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">
+                <i class="fa fa-sign-out"></i> 
+                &nbsp;Logout
+              </a>
+            </li>
+          </div>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login">  
+                <i class="fa fa-sign-in"></i> 
+                &nbsp;Login
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/sign-up">
+                <i class="fa fa-user-plus"></i> 
+                &nbsp;Sign Up
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
 
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, message in messages %} {% if category ==
-    'error' %}
-    <div class="alert alert-danger alter-dismissable fade show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert">
-        <span aria-hidden="true">&times;</span>
-      </button>
+      <!-- Page Content -->
+      <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %} {% if category ==
+        'error' %}
+        <div class="alert alert-danger alter-dismissable fade show" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% else %}
+        <div class="alert alert-success alter-dismissable fade show" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endif %} {% endfor %} {% endif %} {% endwith %}
+
+        <div class="container">
+          {% block content %} {% endblock %}
+        </div>
+      </main>
     </div>
-    {% else %}
-    <div class="alert alert-success alter-dismissable fade show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    {% endif %} {% endfor %} {% endif %} {% endwith %}
+  </div>
 
-    <div class="container">{% block content %} {% endblock %}</div>
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
-
-{% block javascript %}
-    <script type="text/javascript">
-      function deleteProject(projectId) {
-  fetch("/delete-project", {
-    method: "POST",
-    body: JSON.stringify({ projectId: projectId }),
-  }).then((_res) => {
-    window.location.href = "/";
-  });
-  }
-</script>
-{% endblock %}
-  </body>
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"
+  ></script>
+  {% block javascript %}{% endblock %}
+</body>
 </html>

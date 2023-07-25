@@ -1,52 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Bug{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-  <h1 class="text-center">Dashboard</h1>
+  <h2 class="pl-2">My Bugs</h2>
+</div>
+<div class="container mt-4">
 
   <!-- Row divided into two columns -->
   <div class="row">
-    <div class="col-md-6">
-      <!-- Assigned Issues Card -->
-      <div class="card border-primary mb-3">
-        <div class="card-header">
-          <h5 class="card-title">Assigned Issues</h5>
-        </div>
-        <div class="card-body">
-          <ul class="list-group list-group-flush">
+    <div class="col-md-12">
+      <div class="table-responsive">
+        <table class="table table-hover table">
+          <thead>
+            <tr>
+              <th>Bug</th>
+              <th>Status</th>
+              <th>Date Created</th>
+              <th>Project</th>
+            </tr>
+          </thead>
+          <tbody>
             {% for issue in user.bugs %}
-            <li class="list-group-item">
-              <a href="#" data-toggle="modal" data-target="#updateIssueModal{{ issue.id }}">
-                <strong>{{ issue.title }}</strong>
-              </a>
-              <p class="mb-1">{{ issue.description }}</p>
-              <small class="text-muted">Project: {{ issue.project.name }}</small>
-              <p class="mb-0">Assignee: {{ issue.user.first_name }}</p>
-              <p class="mb-0">Status: {{ issue.status }}</p>
-            </li>
+            <tr class="clickable-row" data-toggle="modal" data-target="#updateIssueModal{{ issue.id }}">
+              <td>{{ issue.title }}</td>
+              <td>
+                <span class="badge rounded-pill d-inline {% if issue.status == 'Open' %}badge-primary{% elif issue.status == 'In Progress' %}badge-warning{% elif issue.status == 'Closed' %}badge-success{% endif %}">
+                  {{ issue.status }}
+                </span>
+              </td>
+              <td>{{ issue.date_reported|time_ago }}</td>
+              <td>{{ issue.project.name }}</td>
+            </tr>
             {% endfor %}
-          </ul>
-        </div>
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <!-- The right half of the screen can be used for other content if needed -->
-    <div class="col-md-6">
-      <!-- Other content goes here -->
-    </div>
   </div>
-
 </div>
 
 
-
-
-<!-- Modal for Update Issue -->
 {% for issue in user.bugs %}
 <div class="modal fade" id="updateIssueModal{{ issue.id }}" tabindex="-1" role="dialog" aria-labelledby="updateIssueModalLabel{{ issue.id }}" aria-hidden="true">
-
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -74,8 +71,6 @@
               <option value="Closed" {% if issue.status == 'Closed' %}selected{% endif %}>Closed</option>
             </select>
           </div>
-          
-          <!-- Add a submit button to update the issue -->
           <button type="submit" class="btn btn-primary">Update Issue</button>
         </form>
       </div>
@@ -83,5 +78,23 @@
   </div>
 </div>
 {% endfor %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var rows = document.querySelectorAll(".clickable-row");
+  rows.forEach(function (row) {
+    row.addEventListener("click", function () {
+      var targetModalId = row.dataset.target;
+      if (targetModalId) {
+        var modal = document.querySelector(targetModalId);
+        if (modal) {
+          $(modal).modal("show");
+        }
+      }
+    });
+  });
+});
+
+</script>
 
 {% endblock %}

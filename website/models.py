@@ -27,7 +27,7 @@ class Bug(db.Model):
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150))  # The name column is defined here
+    name = db.Column(db.String(150)) 
     description = db.Column(db.String(500))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     bugs = db.relationship('Bug', backref='project')
