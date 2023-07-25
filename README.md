@@ -56,11 +56,11 @@ source venv/bin/activate
 ## Screenshots
 _Dashboard page which show the bugs assgined to a user._
 
-![Alt text](assets\1.png)
+![Alt text](assets/1.png)
 
 _Page which shows bugs specfic to a project._ 
 
-![Alt text](assets\2.png)
+![Alt text](assets/2.png)
 
 ## Deployment
 
