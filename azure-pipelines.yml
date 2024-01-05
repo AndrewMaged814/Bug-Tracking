@@ -1,7 +1,4 @@
 # Deploy to Azure Kubernetes Service
-# Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - main
 
@@ -58,6 +55,15 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'crfinaltest12'
+              repository: 'container_rep'
+              command: 'buildAndPush'
+              Dockerfile: '**/Dockerfile'
+          # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
+          # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
