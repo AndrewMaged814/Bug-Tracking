@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: bugtracking 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bugtracking
+  template:
+    metadata:
+      labels:
+        app: bugtracking 
+    spec:
+      containers:
+        - name: bugtracking 
+          image: crfinaltest12.azurecr.io/bugtracking
+          ports:
+          - containerPort: 80
